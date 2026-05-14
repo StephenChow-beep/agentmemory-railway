@@ -16,10 +16,11 @@ RUN apt-get update \
     grep \
   && rm -rf /var/lib/apt/lists/*
 
-# Version vue dans tes logs
+# Pin Agentmemory for reproducible Railway builds.
 RUN npm install -g @agentmemory/agentmemory@0.9.12
 
-# iii-engine v0.11.2
+# Pin iii-engine to v0.11.2.
+# Agentmemory currently expects this engine generation.
 RUN mkdir -p /app/.local/bin \
   && curl -fsSL "https://github.com/iii-hq/iii/releases/download/iii/v0.11.2/iii-x86_64-unknown-linux-gnu.tar.gz" \
   | tar -xz -C /app/.local/bin \
@@ -32,7 +33,7 @@ RUN chmod +x /app/start.sh
 
 EXPOSE 8080
 EXPOSE 3112
-EXPOSE 3113
+EXPOSE 8082
 EXPOSE 49134
 
 CMD ["/app/start.sh"]

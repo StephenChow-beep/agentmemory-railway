@@ -67,8 +67,8 @@ echo "[railway] Stream listener should be whatever Agentmemory config defines"
 echo "[railway] Viewer should use Agentmemory defaults"
 
 # Minimal first-run config for Agentmemory 0.9.15/0.9.16.
-# Values are taken from Railway environment variables at runtime.
-# This avoids the interactive onboarding prompt in Railway.
+# Important: since 0.9.15, first-run is controlled by preferences.json,
+# not only by ~/.agentmemory/.env.
 echo "[railway] Writing /app/.agentmemory/.env from Railway variables..."
 
 cat > /app/.agentmemory/.env <<EOF
@@ -81,8 +81,30 @@ AGENTMEMORY_AUTO_COMPRESS=${AGENTMEMORY_AUTO_COMPRESS:-false}
 AGENTMEMORY_INJECT_CONTEXT=${AGENTMEMORY_INJECT_CONTEXT:-false}
 EOF
 
+echo "[railway] Writing /app/.agentmemory/preferences.json to skip interactive first-run..."
+
+cat > /app/.agentmemory/preferences.json <<EOF
+{
+  "schemaVersion": 1,
+  "lastAgent": null,
+  "lastAgents": [],
+  "lastProvider": null,
+  "skipSplash": true,
+  "skipNpxHint": true,
+  "skipGlobalInstall": true,
+  "skipConsoleInstall": true,
+  "firstRunAt": "2026-05-15T00:00:00.000Z"
+}
+EOF
+
+chmod 600 /app/.agentmemory/.env || true
+chmod 600 /app/.agentmemory/preferences.json || true
+
 echo "[railway] Agentmemory env preview:"
 grep -v "SECRET" /app/.agentmemory/.env || true
+
+echo "[railway] Agentmemory preferences preview:"
+cat /app/.agentmemory/preferences.json || true
 
 echo "[railway] Launching agentmemory..."
 
